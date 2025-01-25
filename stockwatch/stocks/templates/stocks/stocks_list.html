@@ -5,6 +5,20 @@
 {% endblock %}
 
 {% block content %}
+
     <h1>Stocks</h1>
-    <p>Register stock options to keep track of</p>
+
+    {% for stock in stocks %}
+        <article class='stocks'>
+            <h2> 
+                <a href="{% url 'stocks:page' name=stock.name %}">
+                    {{ stock.name }}
+                </a>
+            </h2>
+            <p> {{ stock.upper_tunnel_bound }} </p>
+            <p> {{ stock.lower_tunnel_bound }} </p>
+            <p> {{ stock.periodicity }} </p>
+        </article>
+    {% endfor %}
+
 {% endblock %}
