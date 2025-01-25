@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ stock.name }}
+{% endblock %}
+
+{% block content %}
+    <h1> {{ stock.name }} </h1>
+    <p> {{ stock.upper_tunnel_bound }} </p>
+    <p> {{ stock.lower_tunnel_bound }} </p>
+    <p> {{ stock.periodicity }} </p>
+{% endblock %}
