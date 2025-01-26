@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Stocks
+{% endblock %}
+
+{% block content %}
+    
+    <h1>Stocks</h1>
+    <p>
+        <a href="{% url 'user:register' %}">Register</a> to keep track of your stock options or
+        <a href="{% url 'user:login' %}">Login</a> to see your registered stock options.
+    </p>
+
+{% endblock %}
