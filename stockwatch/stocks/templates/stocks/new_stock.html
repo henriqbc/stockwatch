@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    New Stock
+{% endblock %}
+
+{% block content %}
+
+    <h1>Add a new stock</h1>
+    <form action="{% url 'stocks:new' %}" method='post'>
+        {% csrf_token %}
+        {{ form }}
+        <button>Add</button>
+    </form>
+
+{% endblock %}

@@ -14,8 +14,15 @@
 <body>
     <nav>
         <a href="/"> Home </a> |
-        <a href="{% url 'stocks:list' %}"> Stocks </a> |
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'stocks:list' %}"> Stocks </a> |
+        {% else %}
+            <a href="{% url 'stocks:home' %}"> Stocks </a> |
+        {% endif %}
+
         <a href="/notifications"> Notifications </a> |
+        
         <a href="{% url 'user:home' %}">
             {% if user.is_authenticated %}
                 {{ user.username }} 
