@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'stocks',
     'user',
     'mailman',
+
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +138,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'stockwatch.application@gmail.com'
 EMAIL_HOST_PASSWORD = 'oflzxtwyiqpvxrty'
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'GMT-3'
