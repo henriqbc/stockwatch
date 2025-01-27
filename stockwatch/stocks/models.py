@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.template.defaultfilters import slugify
-from django.urls import reverse
 
 MAX_STR_FIELD_SIZE = 150
 
