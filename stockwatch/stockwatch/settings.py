@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'stocks',
-    'user',
+    'subscriber',
     'mailman',
 
     'celery',
@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'stockwatch.context.username_variable',
             ],
         },
     },
@@ -148,3 +149,6 @@ REQUEST_TOKEN = '8WnadZH8hceNcw1NfVUEge'
 REQUEST_PATH_BUILDER = lambda stock_name : f'https://brapi.dev/api/quote/{stock_name}?token={REQUEST_TOKEN}'
 
 CELERY_RESULT_BACKEND = 'django-db'
+
+credentials_username = ''
+credentials_user_email = ''
