@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'mailman',
 
     'celery',
+    'django_celery_beat',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -132,12 +134,17 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mal.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'stockwatch.application@gmail.com'
-EMAIL_HOST_PASSWORD = 'oflzxtwyiqpvxrty'
+EMAIL_HOST_PASSWORD = 'oflz xtwy iqpv xrty'
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_TIMEZONE = 'GMT-3'
+CELERY_TIMEZONE = 'UTC'
+
+REQUEST_TOKEN = '8WnadZH8hceNcw1NfVUEge'
+REQUEST_PATH_BUILDER = lambda stock_name : f'https://brapi.dev/api/quote/{stock_name}?token={REQUEST_TOKEN}'
+
+CELERY_RESULT_BACKEND = 'django-db'
