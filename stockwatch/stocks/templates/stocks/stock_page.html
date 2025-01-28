@@ -1,12 +1,35 @@
 {% extends 'layout.html' %}
 
+{% load static %}
+
 {% block title %}
     {{ stock.name }}
 {% endblock %}
 
+{% block script %}
+    <script src='{% static 'js/confirm_deletion.js' %}'></script>
+{% endblock %}
+
 {% block content %}
     <h1> {{ stock.name }} </h1>
-    <p> {{ stock.upper_tunnel_bound }} </p>
-    <p> {{ stock.lower_tunnel_bound }} </p>
-    <p> {{ stock.periodicity }} </p>
+    <p> Upper tunnel bound: {{ stock.upper_tunnel_bound }} </p>
+    <p> Lower tunnel bound: {{ stock.lower_tunnel_bound }} </p>
+    <p> Check periodicity: {{ stock.periodicity }} </p>
+
+    <h1>History</h1>
+    {% for update in update_history %}
+        <article class='stock'>
+            <p> At {{ update.time}}: </p>
+            <p> {{ update.price }} </p>
+        </article>
+    {% endfor %}
+
+    <form action="{% url 'stocks:update' name=stock.name %}">
+        <button>Change monitoring options</button>
+    </form>
+
+    <form action="{% url 'stocks:delete' name=stock.name%}" onsubmit="confirmDeletion(event)">
+        <button>Remove</button>
+    </form>
+
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{name}}
+{% endblock %}
+
+{% block content %}
+
+    <h1>Change {{name}} monitoring options</h1>
+    <form action="{% url 'stocks:update' name=name%}" method='post'>
+        {% csrf_token %}
+        {{ form }}
+        <button>Apply</button>
+    </form>
+
+{% endblock %}
