@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 MAX_STR_FIELD_SIZE = 150
 
@@ -8,7 +7,6 @@ class MonitoredStock(models.Model):
     upper_tunnel_bound = models.IntegerField()
     lower_tunnel_bound = models.IntegerField()
     periodicity = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
         return self.name

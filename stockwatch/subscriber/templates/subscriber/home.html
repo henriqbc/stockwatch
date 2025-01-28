@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ username }}
+{% endblock %}
+
+{% block content %}
+
+    <h1> Hello, {{ username }}! </h1>
+    <p>Need to change your information? <a href="{% url 'subscriber:subscribe' %}">Click Here</a>.</p>
+
+{% endblock %}

@@ -1,14 +1,14 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Login
+    Subscribe
 {% endblock %}
 
 {% block content %}
 
-    <h1>Login</h1>
+    <h1>Subscribe</h1>
 
-    <form class='form' action="{% url 'user:login' %}" method='post'>
+    <form class='form' action="{% url 'subscriber:subscribe' %}" method='post'>
         {% csrf_token %}
         {{ form }}
         <button>Submit</button>
