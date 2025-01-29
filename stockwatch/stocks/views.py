@@ -27,16 +27,12 @@ def stocks_list(request):
 
 def new_stock(request):
     if request.method == 'POST':
-        print('alo')
         form = forms.RegisterStock(request.POST, request.FILES)
         if form.is_valid():
             new_stock = form.save(commit=False)
-            print('alo2')
             try:
                 response = requests.get(REQUEST_PATH_BUILDER(new_stock.name))
-                print(response.json())
                 response.raise_for_status()
-                print('alo3')
             except requests.exceptions.HTTPError:
                 error_message: str
                 match response.status_code:
@@ -45,7 +41,6 @@ def new_stock(request):
                     case _: error_message = ''
 
                 form.add_error(None, f'Error {response.status_code}: "{error_message}"')
-                print('alo4')
                 return render(request, 'stocks/new_stock.html', {'form':form})
 
             new_stock.save()

@@ -6,4 +6,5 @@ app_name = 'subscriber'
 urlpatterns = [
     path('home/', views.user_page, name='home'),
     path('subscribe/', views.user_subscribe, name='subscribe'),
+    path('reset/', views.user_reset, name='reset'),
 ]
