@@ -17,12 +17,19 @@
     <p> Check periodicity: {{ stock.periodicity }} </p>
 
     <h1>History</h1>
-    {% for update in update_history %}
-        <article class='stock'>
-            <p> At {{ update.time}}: </p>
-            <p> {{ update.price }} </p>
-        </article>
-    {% endfor %}
+    <table>
+        <tr>
+            <th>Price</th>
+            <th>Time</th>
+        </tr>
+        
+        {% for update in update_history %}
+            <tr>
+                <th>update.price</th>
+                <th>update.time</th>
+            </tr>
+        {% endfor %}
+    </table>
 
     <form action="{% url 'stocks:update' name=stock.name %}">
         <button>Change monitoring options</button>

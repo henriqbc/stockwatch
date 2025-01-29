@@ -2,14 +2,15 @@ from django.shortcuts import render, redirect
 from . import models, forms
 from stockwatch.settings import REQUEST_PATH_BUILDER
 import requests
-from stockwatch.context import global_username, NOT_SUSCRIBED
-from django.core.exceptions import ObjectDoesNotExist
+from subscriber.utils import get_username, AuthenticationError
 
 def stock_home(request):
-    if global_username() != NOT_SUSCRIBED:
-        return redirect('stocks:list')
-
-    return render(request, 'stocks/stock_home.html')
+    try:
+        get_username()
+    except AuthenticationError:
+        return render(request, 'stocks/stock_home.html')
+    
+    return redirect('stocks:list')
 
 def stock_page(request, name):
     stock = models.MonitoredStock.objects.get(name = name)
@@ -26,15 +27,25 @@ def stocks_list(request):
 
 def new_stock(request):
     if request.method == 'POST':
+        print('alo')
         form = forms.RegisterStock(request.POST, request.FILES)
         if form.is_valid():
             new_stock = form.save(commit=False)
-
+            print('alo2')
             try:
                 response = requests.get(REQUEST_PATH_BUILDER(new_stock.name))
+                print(response.json())
                 response.raise_for_status()
+                print('alo3')
             except requests.exceptions.HTTPError:
-                form.add_error(None, f'Error {response.status_code}: "{response.json()['message']}"')
+                error_message: str
+                match response.status_code:
+                    case 400: error_message = 'Request is invalid or improperly formatted.'
+                    case 404: error_message = f'Stock {new_stock.name} does not exist.'
+                    case _: error_message = ''
+
+                form.add_error(None, f'Error {response.status_code}: "{error_message}"')
+                print('alo4')
                 return render(request, 'stocks/new_stock.html', {'form':form})
 
             new_stock.save()

@@ -4,7 +4,7 @@ from django.apps import apps
 import json
 import requests
 from stockwatch.settings import REQUEST_PATH_BUILDER
-from mailman.tasks import  send_stock_price_alert_email
+from stockwatch.mailman.handlers import  send_stock_price_alert_email
 
 @shared_task
 def schedule_periodic_check(stock):
