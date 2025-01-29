@@ -144,11 +144,12 @@ EMAIL_HOST_PASSWORD = 'oflz xtwy iqpv xrty'
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_TIMEZONE = 'UTC'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
 REQUEST_TOKEN = '8WnadZH8hceNcw1NfVUEge'
 REQUEST_PATH_BUILDER = lambda stock_name : f'https://brapi.dev/api/quote/{stock_name}?token={REQUEST_TOKEN}'
-
-CELERY_RESULT_BACKEND = 'django-db'
 
 credentials_username = ''
 credentials_user_email = ''

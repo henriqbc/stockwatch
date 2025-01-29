@@ -4,7 +4,19 @@ from django.apps import apps
 import json
 import requests
 from stockwatch.settings import REQUEST_PATH_BUILDER
-from stockwatch.mailman.handlers import  send_stock_price_alert_email
+from mailman.handlers import send_stock_price_alert_email
+import logging
+
+def unschedule_periodic_check(stock_name):
+    try:
+        task_name = stock_name.lower() + '_updater'
+        periodic_task = PeriodicTask.objects.get(name=task_name)
+        periodic_task.delete()
+    except PeriodicTask.DoesNotExist:
+        logging.warning(f"Periodic task for stock {stock_name} not found.")
+
+def unschedule_all_periodic_checks():
+    PeriodicTask.objects.all().delete()
 
 @shared_task
 def schedule_periodic_check(stock):
@@ -35,7 +47,8 @@ def stock_price_updater(stock_id: int, stock_name: str, upper_tunnel_bound: int,
         response = requests.get(REQUEST_PATH_BUILDER(stock_name))
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        raise e
+        logging.error(f"Failed to fetch stock price for {stock_name}: {str(e)}")
+        return
     
     stock_price = response.json()['regularMarketPrice']
 

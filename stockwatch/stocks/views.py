@@ -3,6 +3,9 @@ from . import models, forms
 from stockwatch.settings import REQUEST_PATH_BUILDER
 import requests
 from subscriber.utils import get_username, AuthenticationError
+from django.core.exceptions import ObjectDoesNotExist
+from . import tasks
+from django.forms.models import model_to_dict
 
 def stock_home(request):
     try:
@@ -43,13 +46,15 @@ def new_stock(request):
                 form.add_error(None, f'Error {response.status_code}: "{error_message}"')
                 return render(request, 'stocks/new_stock.html', {'form':form})
 
+            tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
             new_stock.save()
+
             return redirect('stocks:list')
     else:
         form = forms.RegisterStock()
     return render(request, 'stocks/new_stock.html', {'form':form})
 
-def update_stock(request, name):
+def update_stock_config(request, name):
     stock = models.MonitoredStock.objects.get(name = name)
 
     if request.method == 'POST':
@@ -63,11 +68,16 @@ def update_stock(request, name):
     return render(request, 'stocks/update_stock.html', {'form':form, 'name':name})
 
 def delete_stock(request, name):
-    models.MonitoredStock.objects.filter(name = name).delete()
+    try:
+        models.MonitoredStock.objects.filter(name = name).delete()
+        tasks.unschedule_periodic_check(stock_name = name)
+    except ObjectDoesNotExist:
+        raise ObjectDoesNotExist
 
     return redirect('stocks:list')
 
 def delete_all_stocks(request):
+    tasks.unschedule_all_periodic_checks()
     models.MonitoredStock.objects.all().delete()
 
     return redirect('stocks:list')

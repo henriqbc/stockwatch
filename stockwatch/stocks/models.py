@@ -10,6 +10,7 @@ class MonitoredStock(models.Model):
 
     def __str__(self):
         return self.name
+        
 
 class StockUpdate(models.Model):
     stock_id = models.ForeignKey('MonitoredStock', on_delete=models.CASCADE, default=1)
