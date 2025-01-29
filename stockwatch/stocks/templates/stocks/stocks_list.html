@@ -1,7 +1,13 @@
 {% extends 'layout.html' %}
 
+{% load static %}
+
 {% block title %}
     Stocks
+{% endblock %}
+
+{% block script %}
+    <script src='{% static 'js/confirm_full_deletion.js' %}'></script>
 {% endblock %}
 
 {% block content %}
@@ -14,10 +20,14 @@
                     {{ stock.name }}
                 </a>
             </h2>
-            <p> {{ stock.upper_tunnel_bound }} </p>
-            <p> {{ stock.lower_tunnel_bound }} </p>
-            <p> {{ stock.periodicity }} </p>
+            <p> Upper tunnel bound: {{ stock.upper_tunnel_bound }} </p>
+            <p> Lower tunnel bound: {{ stock.lower_tunnel_bound }} </p>
+            <p> Check periodicity: {{ stock.periodicity }} </p>
         </article>
     {% endfor %}
+
+    <form action="{% url 'stocks:full-delete' %}" onsubmit="confirmDeletion(event)">
+        <button>Clear list</button>
+    </form>
 
 {% endblock %}
