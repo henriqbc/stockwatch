@@ -26,5 +26,5 @@ def user_reset(request):
     except ObjectDoesNotExist:
         pass
     
-    return redirect('subscriber:home')
+    return redirect('subscriber:subscribe')
 
