@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'subscriber.context.username_variable',
+                'subscriber.context.user_registered_variable',
             ],
         },
     },

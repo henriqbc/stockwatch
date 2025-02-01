@@ -46,6 +46,7 @@ def new_stock(request):
                 form.add_error(None, f'Error {response.status_code}: "{error_message}"')
                 return render(request, 'stocks/new_stock.html', {'form':form})
 
+            print("Before calling task")
             tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
             new_stock.save()
 
