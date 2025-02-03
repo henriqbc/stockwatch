@@ -20,14 +20,11 @@ def unschedule_all_periodic_checks():
 
 @shared_task
 def schedule_periodic_check(stock):
-    print('Called task')
 
     scheduler = IntervalSchedule.objects.get_or_create(
         every = stock.periodicity,
         period = IntervalSchedule.MINUTES
     )
-
-    print(f'Scheduler registered: {scheduler}')
 
     args = json.dumps({
         'stock_id': stock.id,
@@ -44,8 +41,6 @@ def schedule_periodic_check(stock):
             "args": args,
         }
     )
-
-    print('End of task')
 
 @shared_task(store_errors_even_if_ignored=True, ignore_result=True)
 def stock_price_updater(stock_id: int, stock_name: str, upper_tunnel_bound: int, lower_tunnel_bound: int):

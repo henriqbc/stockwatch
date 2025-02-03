@@ -1,0 +1,29 @@
+.montserrat-font, h1 {
+    font-family: "Montserrat", serif;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    list-style: none;
+    width: 100%;
+    
+    li {
+        margin: 0.5rem 1rem;
+    }
+
+    a {
+        text-decoration: none;
+        color: white;
+
+        &:hover{
+            text-decoration: underline;
+            color: yellow;
+        }
+    }
+}

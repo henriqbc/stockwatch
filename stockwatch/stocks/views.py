@@ -5,7 +5,7 @@ import requests
 from subscriber.utils import get_username, AuthenticationError
 from django.core.exceptions import ObjectDoesNotExist
 from . import tasks
-from django.forms.models import model_to_dict
+import random
 
 def stock_home(request):
     try:
@@ -17,7 +17,7 @@ def stock_home(request):
 
 def stock_page(request, name):
     stock = models.MonitoredStock.objects.get(name = name)
-    stock_history = models.StockUpdate.objects.filter(stock_id = stock.id)
+    stock_history = models.StockUpdate.objects.filter(stock_id = stock.id).order_by('time')
     return render(request, 'stocks/stock_page.html', {'stock':stock, 'update_history': stock_history})
 
 def stocks_list(request):
@@ -46,7 +46,7 @@ def new_stock(request):
                 form.add_error(None, f'Error {response.status_code}: "{error_message}"')
                 return render(request, 'stocks/new_stock.html', {'form':form})
 
-            tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
+            #tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
             new_stock.save()
 
             return redirect('stocks:list')
@@ -81,3 +81,13 @@ def delete_all_stocks(request):
     models.MonitoredStock.objects.all().delete()
 
     return redirect('stocks:list')
+    
+def clear_stock_history(request, name):
+    try:
+        stock = models.MonitoredStock.objects.get(name = name)
+    except ObjectDoesNotExist:
+        raise AuthenticationError
+    
+    models.StockUpdate.objects.filter(stock_id = stock.id).delete()
+
+    return redirect('stocks:page', name = name)
