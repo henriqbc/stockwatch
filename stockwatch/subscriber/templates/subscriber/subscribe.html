@@ -6,12 +6,18 @@
 
 {% block content %}
 
-    <h1>Subscribe</h1>
+    <div class="form-card">
+        <h1>Subscribe</h1>
+    
+        <form class='form' action="{% url 'subscriber:subscribe' %}" method='post'>
+            {% csrf_token %}
 
-    <form class='form' action="{% url 'subscriber:subscribe' %}" method='post'>
-        {% csrf_token %}
-        {{ form }}
-        <button>Submit</button>
-    </form>
+            <div class="form-fields-wrap">
+                {{ form }}
+            </div>
+            
+            <button>Submit</button>
+        </form>
+    </div>
 
 {% endblock %}

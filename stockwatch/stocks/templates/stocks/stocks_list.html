@@ -12,27 +12,30 @@
 
 {% block content %}
 
-    <h1>Stocks</h1>
+    <h1>List</h1>
 
-    <form action="{% url 'stocks:new' %}">
-        <button>Add</button>
-    </form>
+    <ul class='stock-list'>
+        {% for stock in stocks %}
+            <li><article>
+                <h2> 
+                    <a href="{% url 'stocks:page' name=stock.name %}">
+                        {{ stock.name }}
+                    </a>
+                </h2>
+                <p> ({{ stock.lower_tunnel_bound }}, {{ stock.upper_tunnel_bound }})</p>
+                <p> Updated every {{ stock.periodicity }} {% if stock.periodicity == 1 %} minute {% else %} minutes {% endif %}</p>
+            </article></li>
+        {% endfor %}
+    </ul>
+    
+    <ul class='stock-buttons'>
+        <li><form action="{% url 'stocks:new' %}">
+            <button>New</button>
+        </form></li>
 
-    {% for stock in stocks %}
-        <article class='stocks'>
-            <h2> 
-                <a href="{% url 'stocks:page' name=stock.name %}">
-                    {{ stock.name }}
-                </a>
-            </h2>
-            <p> Upper tunnel bound: {{ stock.upper_tunnel_bound }} </p>
-            <p> Lower tunnel bound: {{ stock.lower_tunnel_bound }} </p>
-            <p> Check periodicity: {{ stock.periodicity }} </p>
-        </article>
-    {% endfor %}
-
-    <form action="{% url 'stocks:full-delete' %}" onsubmit="confirmDeletion(event)">
-        <button>Clear list</button>
-    </form>
+        <li><form action="{% url 'stocks:full-delete' %}" onsubmit="confirmDeletion(event)">
+            <button>Clear</button>
+        </form></li>
+    </ul>
 
 {% endblock %}

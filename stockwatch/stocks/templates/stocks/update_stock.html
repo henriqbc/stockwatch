@@ -6,11 +6,17 @@
 
 {% block content %}
 
-    <h1>Change {{name}} monitoring options</h1>
-    <form action="{% url 'stocks:update' name=name%}" method='post'>
-        {% csrf_token %}
-        {{ form }}
-        <button>Apply</button>
-    </form>
+    <div class="form-card">
+        <h1> Edit {{name}} </h1>
+        <form action="{% url 'stocks:update' name=name%}" method='post'>
+            {% csrf_token %}
+
+            <div class="form-fields-wrap">
+                {{ form }}
+            </div>
+            
+            <button>Apply</button>
+        </form>
+    </div>
 
 {% endblock %}

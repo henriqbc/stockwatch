@@ -5,8 +5,7 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = models.UserModel
         fields = ['name', 'email']
-
-    def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-field ff-text', 'max_lenght': str(models.MAX_STR_FIELD_SIZE)}),
+            'email': forms.EmailInput(attrs={'class': 'form-field ff-text'}),
+        }

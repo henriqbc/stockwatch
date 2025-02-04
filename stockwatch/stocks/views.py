@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from . import models, forms
 from stockwatch.settings import REQUEST_PATH_BUILDER
 import requests
-from subscriber.utils import get_username, AuthenticationError
+from subscriber.utils import get_username, AuthenticationError, StockListFetchingError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 from . import tasks
-import random
+
+AVAILABLE_STOCKS_PATH = 'https://brapi.dev/api/available'
 
 def stock_home(request):
     try:
@@ -29,10 +31,21 @@ def stocks_list(request):
     return render(request, 'stocks/stocks_list.html', {'stocks':stocks})
 
 def new_stock(request):
+    try:
+        response = requests.get(AVAILABLE_STOCKS_PATH)
+        data = response.json().get('stocks', [])
+        available_stock = [(stock, stock) for stock in data]
+    except requests.exceptions.RequestException:
+        raise StockListFetchingError
+
     if request.method == 'POST':
-        form = forms.RegisterStock(request.POST, request.FILES)
+        form = forms.RegisterStock(request.POST, request.FILES, choices=available_stock)
+
+        print(request.POST)
+
         if form.is_valid():
             new_stock = form.save(commit=False)
+            
             try:
                 response = requests.get(REQUEST_PATH_BUILDER(new_stock.name))
                 response.raise_for_status()
@@ -43,16 +56,25 @@ def new_stock(request):
                     case 404: error_message = f'Stock {new_stock.name} does not exist.'
                     case _: error_message = ''
 
-                form.add_error(None, f'Error {response.status_code}: "{error_message}"')
+                form.add_error(None, f'Error {response.status_code}: "{error_message}".')
                 return render(request, 'stocks/new_stock.html', {'form':form})
 
+            try:
+                new_stock.save()
+            except IntegrityError:
+                form.add_error(None, f'Error: Stock with name {new_stock.name} already exists.')
+
             #tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
-            new_stock.save()
 
             return redirect('stocks:list')
+        else:
+            return render(request, 'stocks/new_stock.html', {'form':form})
+                
     else:
         form = forms.RegisterStock()
-    return render(request, 'stocks/new_stock.html', {'form':form})
+        form.fields['name'].choices = available_stock
+
+        return render(request, 'stocks/new_stock.html', {'form':form})
 
 def update_stock_config(request, name):
     stock = models.MonitoredStock.objects.get(name = name)

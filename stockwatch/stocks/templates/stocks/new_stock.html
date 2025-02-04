@@ -6,11 +6,17 @@
 
 {% block content %}
 
-    <h1>Add a new stock</h1>
-    <form action="{% url 'stocks:new' %}" method='post'>
-        {% csrf_token %}
-        {{ form }}
-        <button>Add</button>
-    </form>
+    <div class='form-card'>
+        <h1>New Stock</h1>
+        <form action="{% url 'stocks:new' %}" method='post'>
+            {% csrf_token %}
+            
+            <div class="form-fields-wrap">
+                {{ form }}
+            </div>
+            
+            <button>Add</button>
+        </form>
+    </div>
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.db import models
 
-MAX_STR_FIELD_SIZE = 150
+MAX_STR_FIELD_SIZE = 30
 
 class MonitoredStock(models.Model):
     name = models.CharField(max_length=MAX_STR_FIELD_SIZE, unique=True)

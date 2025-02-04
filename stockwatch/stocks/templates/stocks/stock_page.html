@@ -8,12 +8,13 @@
 
 {% block head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/.js' %}"></script>
 {% endblock %}
 
 {% block content %}
     <h1> {{ stock.name }} </h1>
 
-    <div class="mb-4">
+    <div class='chart'>
         <canvas id="stockChart" ></canvas>
     </div>
 
@@ -36,12 +37,16 @@
 
     <script src="{% static 'js/chart_script.js' %}"></script>
 
-    <form action="{% url 'stocks:update' name=stock.name %}">
-        <button>Change monitoring options</button>
-    </form>
+    <ul class='stock-buttons'>
+        <li><form action="{% url 'stocks:update' name=stock.name %}">
+            <button>Edit</button>
+        </form></li>
 
-    <form action="{% url 'stocks:delete' name=stock.name%}" onsubmit="confirmDeletion(event)">
-        <button>Remove</button>
-    </form>
+        <li><form action="{% url 'stocks:delete' name=stock.name%}" onsubmit="confirmDeletion(event)">
+            <button>Remove</button>
+        </form></li>
+    </ul>
+
+
 
 {% endblock %}
