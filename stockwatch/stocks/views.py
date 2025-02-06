@@ -64,7 +64,7 @@ def new_stock(request):
             except IntegrityError:
                 form.add_error(None, f'Error: Stock with name {new_stock.name} already exists.')
 
-            #tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
+            tasks.schedule_periodic_check.delay(model_to_dict(new_stock))
 
             return redirect('stocks:list')
         else:
