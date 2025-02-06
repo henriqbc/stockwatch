@@ -6,6 +6,7 @@ from subscriber.utils import get_username, AuthenticationError, StockListFetchin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from . import tasks
+from django.forms.models import model_to_dict
 
 AVAILABLE_STOCKS_PATH = 'https://brapi.dev/api/available'
 
