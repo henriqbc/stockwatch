@@ -143,7 +143,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'stockwatch.application@gmail.com'
 EMAIL_HOST_PASSWORD = 'oflz xtwy iqpv xrty'
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_TIMEZONE = 'UTC'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 CELERY_ACCEPT_CONTENT = ['json']

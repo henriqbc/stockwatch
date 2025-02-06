@@ -48,9 +48,12 @@ def stock_price_updater(stock_id: int, stock_name: str, upper_tunnel_bound: int,
         response = requests.get(REQUEST_PATH_BUILDER(stock_name))
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
+        print("Problems with query")
         logging.error(f"Failed to fetch stock price for {stock_name}: {str(e)}")
         return
     
+    print("Ran query with api with no problems")
+
     stock_price = response.json()['regularMarketPrice']
 
     StockUpdate = apps.get_model(app_label='stocks', model_name='StockUpdate')
