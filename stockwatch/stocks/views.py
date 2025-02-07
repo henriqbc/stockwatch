@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from . import models, forms
 from stockwatch.settings import REQUEST_PATH_BUILDER, AVAILABLE_STOCKS_PATH
 import requests
-from subscriber.utils import get_username, AuthenticationError, StockListFetchingError
+from subscriber.utils import get_username, AuthenticationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from . import tasks
@@ -13,7 +13,7 @@ def stock_home(request):
     except AuthenticationError:
         return render(request, 'stocks/stock_home.html')
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
     return redirect('stocks:list')
 
@@ -27,8 +27,10 @@ def stock_page(request, name):
         stock = models.MonitoredStock.objects.get(name=name)
         stock_history = models.StockUpdate.objects.filter(stock_id=stock.id).order_by('time')
         return render(request, 'stocks/stock_page.html', {'stock': stock, 'update_history': stock_history})
+    except ObjectDoesNotExist:
+        return redirect('stocks:new')
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
 def stocks_list(request):
     try:
@@ -44,7 +46,7 @@ def stocks_list(request):
 
         return render(request, 'stocks/stocks_list.html', {'stocks': stocks})
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
 def new_stock(request):
     try:
@@ -56,10 +58,8 @@ def new_stock(request):
         response = requests.get(AVAILABLE_STOCKS_PATH)
         data = response.json().get('stocks', [])
         available_stock = [(stock, stock) for stock in data]
-    except requests.exceptions.RequestException:
-        raise StockListFetchingError
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
     if request.method == 'POST':
         form = forms.RegisterStock(request.POST, request.FILES, choices=available_stock)
@@ -74,16 +74,20 @@ def new_stock(request):
                 error_message: str
                 match response.status_code:
                     case 400: error_message = 'Request is invalid or improperly formatted.'
+                    case 402: error_message = 'Limit of requisitions achieved with this brapi account.'
                     case 404: error_message = f'Stock {new_stock.name} does not exist.'
                     case _: error_message = ''
 
                 form.add_error(None, f'Error {response.status_code}: "{error_message}".')
                 return render(request, 'stocks/new_stock.html', {'form': form})
+            except Exception:
+                return redirect("server-error")
 
             try:
                 new_stock.save()
             except IntegrityError:
                 form.add_error(None, f'Error: Stock with name {new_stock.name} already exists.')
+                return render(request, 'stocks/new_stock.html', {'form': form})
 
             tasks.schedule_periodic_check(new_stock)
             tasks.stock_price_updater(new_stock.id, new_stock.name, new_stock.upper_tunnel_bound, new_stock.lower_tunnel_bound)
@@ -115,9 +119,9 @@ def update_stock_config(request, name):
         else:
             form = forms.UpdateStock(instance=stock)
         return render(request, 'stocks/update_stock.html', {'form': form, 'name': name})
-
+    
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
 def delete_stock(request, name):
     try:
@@ -129,7 +133,7 @@ def delete_stock(request, name):
         models.MonitoredStock.objects.filter(name=name).delete()
         tasks.unschedule_periodic_check(stock_name=name)
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
     return redirect('stocks:list')
 
@@ -143,21 +147,6 @@ def delete_all_stocks(request):
         tasks.unschedule_all_periodic_checks()
         models.MonitoredStock.objects.all().delete()
     except Exception:
-        return render(request, 'server-error.html')
+        return redirect("server-error")
 
     return redirect('stocks:list')
-
-def clear_stock_history(request, name):
-    try:
-        get_username()
-    except AuthenticationError:
-        return redirect('stocks:home')
-
-    try:
-        stock = models.MonitoredStock.objects.get(name=name)
-    except Exception:
-        return render(request, 'server-error.html')
-
-    models.StockUpdate.objects.filter(stock_id=stock.id).delete()
-
-    return redirect('stocks:page', name=name)

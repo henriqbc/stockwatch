@@ -100,7 +100,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'stockwatch.application@gmail.com'
 EMAIL_HOST_PASSWORD = 'oflz xtwy iqpv xrty'
 
-REQUEST_TOKEN = '8WnadZH8hceNcw1NfVUEge'
+REQUEST_TOKEN = ''
 REQUEST_PATH_BUILDER = lambda stock_name : f'https://brapi.dev/api/quote/{stock_name}?token={REQUEST_TOKEN}'
 AVAILABLE_STOCKS_PATH = 'https://brapi.dev/api/available'
 

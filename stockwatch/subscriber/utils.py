@@ -6,11 +6,6 @@ class AuthenticationError(Exception):
         self.message = message
         super().__init__(self.message)
 
-class StockListFetchingError(Exception):
-    def __init__(self, message="Unable to fetch available stock list"):
-        self.message = message
-        super().__init__(self.message)
-
 def get_username() -> str:
     try:
         user = models.UserModel.objects.get(id=1)

@@ -27,10 +27,8 @@ def user_subscribe(request):
     return render(request, 'subscriber/subscribe.html', {'form': form})
 
 def user_reset(request):
-    try:
-        get_username()
-    except AuthenticationError:
-        return redirect('subscriber:subscribe')
+    if not request.user.is_superuser:
+        return redirect('server-error')
 
     try:
         models.UserModel.objects.get(id=1).delete()
