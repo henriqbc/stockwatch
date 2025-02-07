@@ -1,4 +1,3 @@
-from celery import shared_task
 from stockwatch.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 from subscriber.utils import get_user_info, AuthenticationError
