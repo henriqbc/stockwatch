@@ -7,5 +7,6 @@ ENV pythonwritebytecode=1
 
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN python -m pip install -r /usr/src/app/requirements.txt
+RUN python manage.py migrate
 
 COPY . /usr/src/app
