@@ -56,12 +56,6 @@ docker exec -it django python manage.py createsuperuser
 
 The terminal will then prompt the user to create their superuser.
 
-Default superuser is:
-- Login: sw-admin
-- Password: sw-password
-
-Default superuser can be removed by deleting the db.sqlite3 file at /stockwatch/stockwath directory before launching the app.
-
 Login as a superuser at /admin. Then go back to the app's base link.
 
 ### **Stocks**
