@@ -2,8 +2,14 @@ from django.shortcuts import render, redirect
 from . import models
 from . import forms
 from django.core.exceptions import ObjectDoesNotExist
+from .utils import get_username, AuthenticationError
 
 def user_page(request):
+    try:
+        get_username()
+    except AuthenticationError:
+        return redirect('subscriber:subscribe')
+
     return render(request, 'subscriber/home.html')
     
 def user_subscribe(request):
@@ -21,6 +27,11 @@ def user_subscribe(request):
     return render(request, 'subscriber/subscribe.html', {'form': form})
 
 def user_reset(request):
+    try:
+        get_username()
+    except AuthenticationError:
+        return redirect('subscriber:subscribe')
+
     try:
         models.UserModel.objects.get(id=1).delete()
     except ObjectDoesNotExist:

@@ -12,20 +12,30 @@ def stock_home(request):
         get_username()
     except AuthenticationError:
         return render(request, 'stocks/stock_home.html')
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
     return redirect('stocks:list')
 
 def stock_page(request, name):
     try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
+    try:
         stock = models.MonitoredStock.objects.get(name=name)
         stock_history = models.StockUpdate.objects.filter(stock_id=stock.id).order_by('time')
         return render(request, 'stocks/stock_page.html', {'stock': stock, 'update_history': stock_history})
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
 def stocks_list(request):
+    try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
     try:
         stocks = models.MonitoredStock.objects.all()
 
@@ -33,17 +43,22 @@ def stocks_list(request):
             return redirect('stocks:new')
 
         return render(request, 'stocks/stocks_list.html', {'stocks': stocks})
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
 def new_stock(request):
+    try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
     try:
         response = requests.get(AVAILABLE_STOCKS_PATH)
         data = response.json().get('stocks', [])
         available_stock = [(stock, stock) for stock in data]
     except requests.exceptions.RequestException:
         raise StockListFetchingError
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
     if request.method == 'POST':
@@ -85,6 +100,11 @@ def new_stock(request):
 
 def update_stock_config(request, name):
     try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
+    try:
         stock = models.MonitoredStock.objects.get(name=name)
 
         if request.method == 'POST':
@@ -94,38 +114,48 @@ def update_stock_config(request, name):
                 return redirect('stocks:page', name=name)
         else:
             form = forms.UpdateStock(instance=stock)
-
         return render(request, 'stocks/update_stock.html', {'form': form, 'name': name})
 
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
 def delete_stock(request, name):
     try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
+    try:
         models.MonitoredStock.objects.filter(name=name).delete()
         tasks.unschedule_periodic_check(stock_name=name)
-    except ObjectDoesNotExist:
-        raise ObjectDoesNotExist
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
     return redirect('stocks:list')
 
 def delete_all_stocks(request):
     try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
+    try:
         tasks.unschedule_all_periodic_checks()
         models.MonitoredStock.objects.all().delete()
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
     return redirect('stocks:list')
 
 def clear_stock_history(request, name):
     try:
+        get_username()
+    except AuthenticationError:
+        return redirect('stocks:home')
+
+    try:
         stock = models.MonitoredStock.objects.get(name=name)
-    except ObjectDoesNotExist:
-        raise AuthenticationError
-    except Exception as e:
+    except Exception:
         return render(request, 'server-error.html')
 
     models.StockUpdate.objects.filter(stock_id=stock.id).delete()
