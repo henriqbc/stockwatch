@@ -12,7 +12,7 @@ Make sure you have [Docker](https://www.docker.com/) installed before starting.
 
 ### brapi
 
-This project uses brapi API to collect information. Create or login to your [brapi](https://brapi.dev/) account and provide the token at the settings file by setting the value to REQUEST_TOKEN as a string, located in the /stockwatch/stockwatch/stockwatch/settings.py directory before starting.
+This project uses brapi API to collect information. Create or login to your [brapi](https://brapi.dev/) account and provide the token at the settings file by setting the value to REQUEST_TOKEN as a string, located in the /stockwatch/stockwatch/stockwatch/settings.py directory before starting. Not properly setting the token will lead to 404 type errors when trying to use any functionalities that rely on brapi requisitions.
 
 ## Getting started
 
