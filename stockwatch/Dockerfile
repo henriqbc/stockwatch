@@ -9,4 +9,3 @@ COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN python -m pip install -r /usr/src/app/requirements.txt
 
 COPY . /usr/src/app
-RUN python manage.py migrate
