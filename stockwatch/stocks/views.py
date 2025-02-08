@@ -45,7 +45,7 @@ def stocks_list(request):
             return redirect('stocks:new')
 
         return render(request, 'stocks/stocks_list.html', {'stocks': stocks})
-    except Exception:
+    except Exception as e:
         return redirect("server-error")
 
 def new_stock(request):
@@ -143,7 +143,7 @@ def delete_stock(request, name):
         tasks.unschedule_periodic_check(stock_name=name)
     except Exception:
         return redirect("server-error")
-
+    
     return redirect('stocks:list')
 
 def delete_all_stocks(request):
@@ -153,9 +153,13 @@ def delete_all_stocks(request):
         return redirect('stocks:home')
 
     try:
-        tasks.unschedule_all_periodic_checks()
-        models.MonitoredStock.objects.all().delete()
+        deleted_count, _ = models.MonitoredStock.objects.all().delete()
+        if deleted_count == 0:
+            return redirect("server-error")
+        
     except Exception:
         return redirect("server-error")
+    
+    tasks.unschedule_all_periodic_checks()
 
     return redirect('stocks:list')
