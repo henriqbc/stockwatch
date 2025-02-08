@@ -26,6 +26,14 @@ docker-compose up --build
 ```
 The app will be running at 127.0.0.1 or localhost, port 8000.
 
+## Tests
+
+To run all unit tests
+
+```bash
+docker exec -it django python manage.py tests
+```
+
 ## Using the app
 
 ### **User**
@@ -141,7 +149,7 @@ The Stockwatch tab will always lead the user to the homepage.
 The Stocks tab will take the user to /stocks when unsubscribed. When subscribed, it will redirect the user to /stocks/new if no stocks are registered or to /stocks/list if at least one is registered.
 
 The User / (User's Name) tab will lead the user to /user/register when unsubscribed and to /user/home otherwise.
-  
+ 
 ## License
 
 This project is licensed under the MIT License.
