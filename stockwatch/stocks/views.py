@@ -28,7 +28,7 @@ def stock_page(request, name):
         stock_history = models.StockUpdate.objects.filter(stock_id=stock.id).order_by('time')
         return render(request, 'stocks/stock_page.html', {'stock': stock, 'update_history': stock_history})
     except ObjectDoesNotExist:
-        return redirect('stocks:new')
+        return redirect("stocks:new")
     except Exception:
         return redirect("server-error")
 
@@ -71,6 +71,7 @@ def new_stock(request):
                 response = requests.get(REQUEST_PATH_BUILDER(new_stock.name))
                 response.raise_for_status()
             except requests.exceptions.HTTPError:
+
                 error_message: str
                 match response.status_code:
                     case 400: error_message = 'Request is invalid or improperly formatted.'
@@ -88,7 +89,7 @@ def new_stock(request):
             except IntegrityError:
                 form.add_error(None, f'Error: Stock with name {new_stock.name} already exists.')
                 return render(request, 'stocks/new_stock.html', {'form': form})
-
+            
             tasks.schedule_periodic_check(new_stock)
             tasks.stock_price_updater(new_stock.id, new_stock.name, new_stock.upper_tunnel_bound, new_stock.lower_tunnel_bound)
 
@@ -116,9 +117,14 @@ def update_stock_config(request, name):
             if form.is_valid():
                 form.save()
                 return redirect('stocks:page', name=name)
+            else:
+                return render(request, 'stocks/update_stock.html', {'form': form, 'name': name})
         else:
             form = forms.UpdateStock(instance=stock)
         return render(request, 'stocks/update_stock.html', {'form': form, 'name': name})
+    
+    except ObjectDoesNotExist:
+        return redirect("stocks:list")
     
     except Exception:
         return redirect("server-error")
@@ -130,7 +136,10 @@ def delete_stock(request, name):
         return redirect('stocks:home')
 
     try:
-        models.MonitoredStock.objects.filter(name=name).delete()
+        deleted_count, _ = models.MonitoredStock.objects.filter(name=name).delete()
+        if deleted_count == 0:
+            return redirect("server-error")
+        
         tasks.unschedule_periodic_check(stock_name=name)
     except Exception:
         return redirect("server-error")
